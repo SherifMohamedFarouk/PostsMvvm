@@ -1,6 +1,6 @@
 package com.sherif.postsmvvm.injection.component
 
-import com.sherif.postsmvvm.injection.NetworkModule
+import com.sherif.postsmvvm.injection.module.NetworkModule
 import com.sherif.postsmvvm.ui.post.PostListViewModel
 import dagger.Component
 import javax.inject.Singleton

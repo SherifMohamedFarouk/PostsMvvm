@@ -1,4 +1,4 @@
-package com.sherif.postsmvvm.injection
+package com.sherif.postsmvvm.injection.module
 
 import com.sherif.postsmvvm.network.PostApi
 import com.sherif.postsmvvm.utils.BASE_URL
