@@ -6,13 +6,15 @@ import androidx.lifecycle.MutableLiveData
 import com.sherif.postsmvvm.R
 import com.sherif.postsmvvm.base.BaseViewModel
 import com.sherif.postsmvvm.model.Post
+import com.sherif.postsmvvm.model.PostDao
 import com.sherif.postsmvvm.network.PostApi
+import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
 
-class PostListViewModel:BaseViewModel(){
+class PostListViewModel(private val postDao: PostDao):BaseViewModel(){
     @Inject
     lateinit var postApi: PostApi
     val postListAdapter : PostListAdapter = PostListAdapter()
@@ -26,7 +28,14 @@ class PostListViewModel:BaseViewModel(){
     }
 
     private fun loadPosts(){
-        subscription = postApi.getPosts()
+        subscription =  Observable.fromCallable { postDao.all }
+            .concatMap { dbPostList ->
+                if(dbPostList.isEmpty())
+                    postApi.getPosts().concatMap {  apiPostList -> postDao.insertAll(*apiPostList.toTypedArray())
+                        Observable.just(apiPostList)
+                    }       else
+                    Observable.just(dbPostList)
+            }
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .doOnSubscribe{onRetrievePostListStart()}
