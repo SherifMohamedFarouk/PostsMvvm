@@ -5,6 +5,7 @@ import com.sherif.postsmvvm.injection.module.NetworkModule
 import com.sherif.postsmvvm.injection.component.DaggerViewModelInjector
 import com.sherif.postsmvvm.injection.component.ViewModelInjector
 import com.sherif.postsmvvm.ui.post.PostListViewModel
+import com.sherif.postsmvvm.ui.post.PostViewModel
 
 abstract class BaseViewModel: ViewModel() {
 
@@ -20,6 +21,7 @@ abstract class BaseViewModel: ViewModel() {
     private fun inject() {
         when (this) {
             is PostListViewModel -> injector.inject(this)
+            is PostViewModel -> injector.inject(this)
         }
     }
 

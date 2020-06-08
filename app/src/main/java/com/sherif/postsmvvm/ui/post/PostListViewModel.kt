@@ -1,9 +1,11 @@
 package com.sherif.postsmvvm.ui.post
 
+import android.util.Log
 import android.view.View
 import androidx.lifecycle.MutableLiveData
 import com.sherif.postsmvvm.R
 import com.sherif.postsmvvm.base.BaseViewModel
+import com.sherif.postsmvvm.model.Post
 import com.sherif.postsmvvm.network.PostApi
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
@@ -13,11 +15,15 @@ import javax.inject.Inject
 class PostListViewModel:BaseViewModel(){
     @Inject
     lateinit var postApi: PostApi
+    val postListAdapter : PostListAdapter = PostListAdapter()
     val loadingVisibility :MutableLiveData<Int> = MutableLiveData()
     val errorMessage : MutableLiveData<Int> = MutableLiveData()
     val errorClickListener = View.OnClickListener { loadPosts() }
 
     private lateinit var subscription: Disposable
+    init {
+        loadPosts()
+    }
 
     private fun loadPosts(){
         subscription = postApi.getPosts()
@@ -26,7 +32,8 @@ class PostListViewModel:BaseViewModel(){
             .doOnSubscribe{onRetrievePostListStart()}
             .doOnTerminate{onRetrievePostListFinish()}
             .subscribe(
-                {onRetrievePostListSuccess()}
+                {result -> onRetrievePostListSuccess(result)
+                Log.v("heyyy", result.toString())}
                 ,{onRetrievePostListError()}
             )
     }
@@ -42,7 +49,8 @@ class PostListViewModel:BaseViewModel(){
 
     }
 
-    private fun onRetrievePostListSuccess(){
+    private fun onRetrievePostListSuccess(postList:List<Post>){
+        postListAdapter.updatePostList(postList)
 
     }
 
